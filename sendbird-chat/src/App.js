@@ -2,11 +2,12 @@ import logo from './logo.svg';
 import './App.css';
 import { App as SendbirdApp } from "sendbird-uikit";
 import "sendbird-uikit/dist/index.css";
+import {APP_ID, USER_ID} from './const.js'
 
 function App() {
   return (
     <div className="App" style={{height:600}}>
-      <SendbirdApp appId="C57F7231-5C66-48F0-A0DF-197E55125B1E" userId="johnshin"></SendbirdApp>
+      <SendbirdApp appId={APP_ID} userId={USER_ID}></SendbirdApp>
     </div>
   );
 }
