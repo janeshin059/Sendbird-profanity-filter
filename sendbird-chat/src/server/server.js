@@ -1,6 +1,4 @@
 
-var firebase = require("firebase");
-
 const express = require("express");
 var admin = require("firebase-admin");
 
@@ -16,20 +14,21 @@ const PORT = process.env.PORT || 9000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+let tokens = [];
 //Get token from firestore
-// const db = admin.firestore();
-// const tokenRef = db.collection('notifications').doc('54dLaTKx4XmxdMceR88w');
-// const doc = tokenRef.get();
-// console.log(tokenRef);
-// if (!doc.exists) {
-//   console.log('No such document!');
-// } else {
-//   console.log('Document data:', doc.data());
-// }
+const db = admin.firestore();
+const tokenRef = db.collection('notifications').doc('tokens');
+tokenRef.get().then((doc) => { 
+  console.log(doc);
+  if (doc.exists) {
+    console.log('Document data:', doc.data().token);
+    tokens.push(doc.data().token);
 
-let tokens = ['cd0dfjDqetvMf_-RKDD9IT:APA91bHoxF51nXzNmaIizvRhEXj_0m0pfnuS9VJRP-9f8FOx3qcVrraY1g4G2rvDk7Y6QJkyQb160V_cdx2s-xetM9i-AdRGl9Qz_y2QjZ_4Hlw7eom79O21pdNnAZY6f_w26JFvMR2t'];
+  } else {
+    console.log('No such document!');
+  }
+});
 
-//TODO:Sendbird Webhook
 app.post('/hook', (req, res) => {
   const body = req.body;
 

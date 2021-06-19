@@ -33,16 +33,14 @@ export const requestFirebaseNotificationPermission = () => {
         })
         .then((token) => {
           console.log(token);
-          
-          localStorage.setItem("notification-token",token)
           //Add token to cloud firestore, to make it safely accessible
           const db = firebase.firestore();
           db.settings({
             timestampsInSnapshots: true
           });
-          db.collection("notifications").add({
-            token: token
-          });
+          db.collection("notifications").doc("tokens").set({
+            token:token
+          })
         })
         .catch((err) => {
           console.log("An error occurred while retrieving token: ", err);
