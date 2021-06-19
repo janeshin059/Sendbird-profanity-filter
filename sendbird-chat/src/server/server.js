@@ -1,13 +1,11 @@
-//import admin from "firebase-admin";
-//import { googleApplicationCredentials } from "./settings";
+
+var firebase = require("firebase");
 
 const express = require("express");
 var admin = require("firebase-admin");
 const crypto = require('crypto');
 
 //Firebase messaging setup
-
-//const serviceAccount = require(googleApplicationCredentials);
 const serviceAccount = require('./sendbird-app-firebase-admin.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -19,34 +17,27 @@ const PORT = process.env.PORT || 9000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-let tokens = ['cd0dfjDqetvMf_-RKDD9IT:APA91bE0leP1WyUocCSgOqgPAVChHqadB7vcNpnLOyvuzqaVen3QCeQlWSICmd-0XXux8aSuY3GNlvGfAWsBJmP1ZR1hKyVH7m3NRnIFD5GtTF4lRnWDvHQHJMEOXaTqgD2TZbtRkcOm'];
-
-// if(localStorage.getItem("notification-token")){
-//   tokens.push(localStorage.getItem("notification-token"));
+//Get token from firestore
+// const db = admin.firestore();
+// const tokenRef = db.collection('notifications').doc('54dLaTKx4XmxdMceR88w');
+// const doc = tokenRef.get();
+// console.log(tokenRef);
+// if (!doc.exists) {
+//   console.log('No such document!');
+// } else {
+//   console.log('Document data:', doc.data());
 // }
 
-//TODO:Webhook
+let tokens = ['cd0dfjDqetvMf_-RKDD9IT:APA91bHoxF51nXzNmaIizvRhEXj_0m0pfnuS9VJRP-9f8FOx3qcVrraY1g4G2rvDk7Y6QJkyQb160V_cdx2s-xetM9i-AdRGl9Qz_y2QjZ_4Hlw7eom79O21pdNnAZY6f_w26JFvMR2t'];
+
+//TODO:Sendbird Webhook
 app.post('/express_backend', (req, res) => {
   const body = req.body;
-
-  // const signature = req.get('x-sendbird-signature');
-  // const hash = crypto
-  //     .createHmac('sha256','57b27d8fb20ddf493b2d61f3d882a07982bc72d2')
-  //     .update(body)
-  //     .digest('hex');
-  
-  // if (signature == hash) {
-  //     console.log('Request signature ok');
-  //     // move switch statement below here so it executes only when a valid signature is present
-  //     res.sendStatus(200);
-  // } else {
-  //     console.log('Invalid signature, ignoring request');
-  //     res.sendStatus(401);
-  // }
 
   console.log(body);
 
   if (body.category === "profanity_filter:replace") {
+    console.log('profanity replaced')
     notify(body.payload.message);
   } else {
     console.log("Unhandled event:", body.category);
@@ -57,8 +48,8 @@ app.post('/express_backend', (req, res) => {
 function notify(body) {
   console.log('Profanity filter');
   const message = {
-    data: { title: "Filtered bad words!", body: body },
-    tokens: tokens,
+    data: { title: "Profanity filter", body: body },
+    tokens: tokens
   };
   admin
     .messaging()
@@ -67,7 +58,7 @@ function notify(body) {
       console.log(res);
     })
     .catch((error) => {
-      console.lof("Error sending notifications:", error);
+      console.log("Error sending notifications:", error);
     });
 }
 

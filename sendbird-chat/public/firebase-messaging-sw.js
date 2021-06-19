@@ -14,10 +14,10 @@ const initMessaging = firebase.messaging();
 
 initMessaging.onBackgroundMessage(function (payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  const title = 'Filtered bad words!';
+  const title = 'Profanity filter';
   const options = {
     body: payload.data.body,
-    icon: './sb_logo.svg'
+    icon: '/sb_logo.png'
   }
   self.registration.showNotification(title, options);
 })

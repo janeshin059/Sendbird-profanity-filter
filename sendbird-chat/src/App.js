@@ -6,23 +6,8 @@ import React from 'react';
 import { requestFirebaseNotificationPermission } from './firebaseInit'
 
 function App() {
-  // React.useEffect(() => {
-  // const msg = firebase.messaging();
-  // msg.requestPermission().then(() => {
-  //   return msg.getToken();
-
-  // }).then((data)=>{
-  //   console.warn("token",data)
-  // })
-  // }
-  // )
-
-  // state = {
-  //   data: null
-  // };
-
   
-    // fetching the GET route from the Express server which matches the GET route from server.js
+  // fetching the GET route from the Express server which matches the GET route from server.js
  const callBackendAPI = async () => {
     const response = await fetch('/express_backend');
     const body = await response.json();
@@ -35,10 +20,8 @@ function App() {
 
   //componentDidMount() {
     callBackendAPI()
-      .then(res => this.setState({ data: res.express }))
       .catch(err => console.log(err));
   //};
-
 
   //Request the browser's permission to send notifications 
   if(!localStorage.getItem("notification-token")){
