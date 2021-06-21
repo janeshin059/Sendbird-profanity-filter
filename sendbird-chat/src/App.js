@@ -10,7 +10,7 @@ function App() {
   requestFirebaseNotificationPermission();
 
   return (
-    <div className="App" style={{ height: 600 }}>
+    <div className="App" style={{ height: 700 }}>
       <SendbirdApp
         appId={APP_ID}
         userId={USER_ID}

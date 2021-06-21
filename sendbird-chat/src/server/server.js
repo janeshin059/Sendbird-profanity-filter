@@ -1,40 +1,39 @@
-
 const express = require("express");
 var admin = require("firebase-admin");
+const PORT = process.env.PORT || 9000;
 
 //Firebase messaging setup
-const serviceAccount = require('./sendbird-app-firebase-admin.json');
+const serviceAccount = require("./sendbird-app-firebase-admin.json");
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
 
-//Initialize express and define port
+//Initialize express
 const app = express();
-const PORT = process.env.PORT || 9000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//Array to store registration token
 let tokens = [];
+
 //Get token from firestore
 const db = admin.firestore();
-const tokenRef = db.collection('notifications').doc('tokens');
-tokenRef.get().then((doc) => { 
-  console.log(doc);
+const tokenRef = db.collection("notifications").doc("tokens");
+tokenRef.get().then((doc) => {
   if (doc.exists) {
-    console.log('Document data:', doc.data().token);
+    console.log("Document data:", doc.data().token);
     tokens.push(doc.data().token);
-
   } else {
-    console.log('No such document!');
+    console.log("No such document!");
   }
 });
 
-app.post('/hook', (req, res) => {
+app.post("/hook", (req, res) => {
   const body = req.body;
 
   console.log(body);
-  if (body.category === "profanity_filter:replace") {
-    console.log('profanity replaced')
+  if (body.category === "profanity_filter:replace" && tokens.length > 0) {
+    console.log("Profanity replaced");
     notify(body.payload.message);
   } else {
     console.log("Unhandled event:", body.category);
@@ -42,11 +41,12 @@ app.post('/hook', (req, res) => {
   return res.sendStatus(200);
 });
 
+//Send notifications to all clients using FCM
 function notify(body) {
-  console.log('Profanity filter');
+  console.log("Profanity filter");
   const message = {
     data: { title: "Profanity filter", body: body },
-    tokens: tokens
+    tokens: tokens,
   };
   admin
     .messaging()
@@ -61,6 +61,6 @@ function notify(body) {
 
 app.listen(PORT, () => console.log(`App running at port ${PORT}!`));
 
-app.get('/hook', (req, res) => { 
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' }); 
-}); 
+app.get("/hook", (req, res) => {
+  res.send({ express: "YOUR EXPRESS BACKEND IS CONNECTED TO REACT" });
+});

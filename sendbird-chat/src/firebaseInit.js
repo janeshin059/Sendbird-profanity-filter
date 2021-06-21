@@ -35,12 +35,16 @@ export const requestFirebaseNotificationPermission = () => {
           console.log(token);
           //Add token to cloud firestore, to make it safely accessible
           const db = firebase.firestore();
+          try{
           db.settings({
-            timestampsInSnapshots: true
-          });
+            timestampsInSnapshots: true,
+            merge: true
+          });}
+          catch {}
           db.collection("notifications").doc("tokens").set({
-            token:token
-          })
+            token: token,
+           
+          });
         })
         .catch((err) => {
           console.log("An error occurred while retrieving token: ", err);
@@ -53,7 +57,7 @@ messaging.onMessage(function (payload) {
   console.log("[firebase-messaging-sw.js] Received message ", payload);
   new Notification(payload.data.title, {
     body: payload.data.body,
-    icon: '/sb_logo.png'
+    icon: "/sb_logo.png",
   });
 });
 
